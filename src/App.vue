@@ -9,23 +9,24 @@
                                 placeholder="Search"
                                 class="search-box"
                                 v-model="query"
-                                @keypress="fetchWeather">
+                                @keypress="GetWeather"
+                        >
                     </div>
                 </div>
-                <div class="row text-center ">
+                <div class="row text-center " v-if="weather.name != '' ">
                     <div class="col-12 city-info">
                         <p class="weather-location">
-                            Amman
+                            {{ weather.name }}
                         </p>
                         <span class="date">
-                            modus 10/8/1203
+                            {{ Date() }}
                         </span>
                     </div>
-                    <div class="col-12 weather-info ">
-                        <p class="temp">9°c</p>
+                    <div class="col-12 weather-info  "   v-if="weather.name != '' " >
+                        <p class="temp">{{ Math.ceil(weather.main.temp)  }}</p>
 
 
-                        <p class="status">Rain</p>
+                        <p class="status">{{ weather.weather[0].main}}</p>
 
                     </div>
                 </div>
@@ -38,7 +39,15 @@
 
 <script>
 
+    import axios from "axios";
+
     export default {
+        created() {
+            axios.get('http://api.openweathermap.org/data/2.5/weather?q=Amman,%20JO,uk&units=metric&APPID=ece1855ffc24670239bf1cf47663ab6b').then(respons => {
+                this.weather = respons.data;
+                console.log(this.weather);
+            });
+        },
         name: 'App',
         data() {
             return {
@@ -50,7 +59,17 @@
             }
         },
         methods:
-            {}
+            {
+                GetWeather:function (e) {
+                    if (e.key === "Enter") {
+                        axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${this.query},%20JO,uk&units=metric&APPID=ece1855ffc24670239bf1cf47663ab6b`).then(respons => {
+                            this.weather = respons.data;
+                            console.log(this.weather);
+                        });
+                    }
+
+                }
+            }
     }
 </script>
 
